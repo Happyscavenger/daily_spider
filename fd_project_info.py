@@ -65,6 +65,9 @@ class NewFd(object):
 			# res = response.content.decode('utf-8')
 			if response.status_code != 200:
 				response = ''
+			else:
+				if "读取出现异常" in response.text:
+					response = ""
 		except:
 			response = ""
 		return response
