@@ -125,7 +125,6 @@ class BanBan(object):
 		self.my_threading(self.detail_url_queue, self.parse_detail)
 		self.generate_excel()
 
-
 if __name__ == '__main__':
 	banban = BanBan()
 	banban.run()
