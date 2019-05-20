@@ -37,9 +37,45 @@ class FangTxProject(object):
 		self.res = requests.get(self.apiUrl).text.strip('\n')
 		return self.res
 	# 请求方法
+	# def Download(self, url):
+	# 	''' 页面下载 '''
+	# 	proxies = {'http': 'http://' + self.proxyip}
+	# 	first_num = random.randint(55, 62)
+	# 	third_num = random.randint(0, 3200)
+	# 	fourth_num = random.randint(0, 140)
+	# 	os_type = [
+	# 		'(Windows NT 6.1; WOW64)', '(Windows NT 10.0; WOW64)', '(X11; Linux x86_64)',
+	# 		'(Macintosh; Intel Mac OS X 10_12_6)'
+	# 	]
+	# 	chrome_version = 'Chrome/{}.0.{}.{}'.format(first_num, third_num, fourth_num)
+	#
+	# 	ua = ' '.join(['Mozilla/5.0', random.choice(os_type), 'AppleWebKit/537.36',
+	# 	               '(KHTML, like Gecko)', chrome_version, 'Safari/537.36']
+	# 	              )
+	# 	# "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36"
+	# 	headers = {
+	# 		"user-agent": ua,
+	# 		'accept': 'text / html, application / xhtml + xml, application / xml;q = 0.9, image / webp, image / apng, * / *;q = 0.8',
+	# 		'accept - encoding': 'gzip, deflate, br',
+	# 		'accept - language': 'zh - CN, zh;q = 0.9',
+	# 		'cache - control': 'no - cache'
+	# 	}
+	# 	try:
+	# 		response = requests.get(url, headers=headers, proxies=proxies, timeout=15)
+	# 		if response.status_code == 200:
+	# 			try:
+	# 				res = response.content.decode('gbk', 'ignore')
+	# 			except:
+	# 				res = response.content.decode('gb2312', 'ignore').encode('gb2312')
+	# 		else:
+	# 			res = ""
+	# 	except:
+	# 		res = ""
+	# 	return res
+	
 	def Download(self, url):
 		''' 页面下载 '''
-		proxies = {'http': 'http://' + self.proxyip}
+		# proxies = {'http': 'http://' + self.proxyip, "https": "https://" + self.proxyip}
 		first_num = random.randint(55, 62)
 		third_num = random.randint(0, 3200)
 		fourth_num = random.randint(0, 140)
@@ -52,21 +88,21 @@ class FangTxProject(object):
 		ua = ' '.join(['Mozilla/5.0', random.choice(os_type), 'AppleWebKit/537.36',
 		               '(KHTML, like Gecko)', chrome_version, 'Safari/537.36']
 		              )
-		# "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36"
 		headers = {
-			"user-agent": ua,
-			'accept': 'text / html, application / xhtml + xml, application / xml;q = 0.9, image / webp, image / apng, * / *;q = 0.8',
-			'accept - encoding': 'gzip, deflate, br',
-			'accept - language': 'zh - CN, zh;q = 0.9',
-			'cache - control': 'no - cache'
+			"User-Agent": ua,
+			"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+			"Accept-Encoding": "gzip, deflate, br",
+			"Accept-Language": "zh-CN,zh;q=0.9",
+			"Cache-Control": "no-cache",
+			"Host": "sh.esf.fang.com",
+			"Pragma": "no-cache",
+			"Referer": "https://sh.esf.fang.com/",
+			"Upgrade-Insecure-Requests": "1"
 		}
 		try:
-			response = requests.get(url, headers=headers, proxies=proxies, timeout=15)
+			response = requests.get(url, headers=headers,timeout=30)
 			if response.status_code == 200:
-				try:
-					res = response.content.decode('gbk', 'ignore')
-				except:
-					res = response.content.decode('gb2312', 'ignore').encode('gb2312')
+				res = response.text
 			else:
 				res = ""
 		except:
@@ -133,10 +169,6 @@ class FangTxProject(object):
 					print(house_url)
 					if self.ftx.count_documents({'url': house_url}) <= 0:
 						self.ftx.insert({'url': house_url, 'tag': ''})
-				else:
-					with open("err.txt","a") as f:
-						f.write(page_url)
-						
 		else:
 			self.event.clear()
 			time.sleep(1)

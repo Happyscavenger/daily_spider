@@ -2,7 +2,8 @@ import requests, re, queue, threading, pymysql, time, sys
 from bs4 import BeautifulSoup
 from pymongo import MongoClient
 from lxml import etree
-import random
+import random,sys
+
 
 class FangTxHouse(object):
 	
@@ -26,9 +27,8 @@ class FangTxHouse(object):
 		self.res = requests.get(self.apiUrl).text.strip('\n')
 		return self.res
 	
-	def Download(self, url):
+	def Download(self,url):
 		''' 页面下载 '''
-		proxies = {'http': 'http://' + self.proxyip}
 		first_num = random.randint(55, 62)
 		third_num = random.randint(0, 3200)
 		fourth_num = random.randint(0, 140)
@@ -43,29 +43,33 @@ class FangTxHouse(object):
 		              )
 		# "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36"
 		headers = {
-			"user-agent": ua,
-			'accept': 'text / html, application / xhtml + xml, application / xml;q = 0.9, image / webp, image / apng, * / *;q = 0.8',
-			'accept - encoding': 'gzip, deflate, br',
-			'accept - language': 'zh - CN, zh;q = 0.9',
-			'cache - control': 'no - cache'
+			"User-Agent": ua,
+			"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+			"Accept-Encoding": "gzip, deflate, br",
+			"Accept-Language": "zh-CN,zh;q=0.9",
+			"Cache-Control": "no-cache",
+			"Host": "sh.esf.fang.com",
+			"Pragma": "no-cache",
+			"Referer": "https://sh.esf.fang.com/",
+			"Upgrade-Insecure-Requests": "1"
 		}
+		proxies = {'http': 'http://' + self.proxyip, "https": "https://" + self.proxyip}
 		try:
-			response = requests.get(url, headers=headers, proxies=proxies, timeout=15)
-			if response.status_code == 200:
-				try:
-					res = response.content.decode('gbk', 'ignore')
-				except:
-					res = response.content.decode('gb2312', 'ignore').encode('gb2312')
-			else:
-				res = ""
+			response = requests.get(url, headers=headers, proxies=proxies, timeout=5)
+			# response.encoding = 'GBK'
+			# soup = BeautifulSoup(response.text, 'lxml')
+			res = response.text
 		except:
-			res = ""
+			info = sys.exc_info()
+			if not 'timed out' in str(info[1]):
+				print(threading.currentThread().getName(), info[1])
+			return ''
 		return res
 	
 	def IsSet(self):
 		''' 线程运行状态 '''
 		while True:
-			if not self.event.isSet():# 线程阻塞，更换IP
+			if not self.event.isSet():  # 线程阻塞，更换IP
 				try:
 					self.proxyip = self.GetProxyIp
 				except:
@@ -74,11 +78,12 @@ class FangTxHouse(object):
 					continue
 				self.num += 1
 				print('IP更换次数', self.num)
-				self.event.set() # 标记状态为True
-			time.sleep(5)
+				self.event.set()  # 标记状态为True
+			time.sleep(3)
 			if not self.bol:
 				break
-	#从mongo中获取url
+	
+	# 从mongo中获取url
 	def push_url(self):
 		for i in self.ftx.find({"tag": ''}).sort('url', 1):
 			self.url_queue.put(i['url'])
@@ -91,7 +96,7 @@ class FangTxHouse(object):
 			if res:
 				if '未找到相关页面' in res:
 					print('http://esf.sh.fang.com' + htmlUrl)
-					self.ftx.remove({'url': htmlUrl})
+					self.ftx.delete_one({'url': htmlUrl})
 				elif not 'pageConfig.district =' in res:
 					return
 				break
@@ -131,9 +136,16 @@ class FangTxHouse(object):
 			info['电话'] = info['电话'][0] if info['电话'] else None
 			info['户型'] = html.xpath("//div[text()='户型']/preceding-sibling::div[1]/text()")
 			info['户型'] = info['户型'][0].strip() if info['户型'] else ""
-			info['装修'] = html.xpath("//div[text()='装修']/preceding-sibling::div[1]/text()")[0]
-			info['类别'] = html.xpath("//span[text()='建筑类别']/following-sibling::span[1]/text()")
-			info['类别'] = info['类别'][0] if info['类别'] else ""
+			# info['装修'] = html.xpath("//div[text()='装修']/preceding-sibling::*[1]/text()")[0]
+			infos = html.xpath("//div[@class='tab-cont-right']/div/div[@style='border-right: 0;']/div/text()")
+			info['装修'] = infos[2]
+			a = html.xpath("//div[@class='cont clearfix']/div/span/text()")
+			info['类别'] = ''
+			for i in range(len(a)):
+				if a[i].strip() == "建筑类别":
+					info['类别'] = a[i + 1]
+					break
+			# info['类别'] = html.xpath("//span[text()='建筑类别']/following-sibling::span[1]/text()")
 			info['中介'] = re.findall("pageConfig.comname='(.*)?'", res)[0].strip()
 			info['类型'] = re.findall("pageConfig.purpose='(.*)?'", res)[0].strip()
 			info['URL'] = 'http://esf.sh.fang.com' + htmlUrl
@@ -155,31 +167,31 @@ class FangTxHouse(object):
 				conn.commit()
 				cursor.close()
 				conn.close()
-				self.ftx.update({'url': htmlUrl}, {'$set': {
+				self.ftx.update_one({'url': htmlUrl}, {'$set': {
 					'tag': '1'
 				}})
 			except:
 				pass
-			time.sleep(1)
 	
 	# 多线程（队列，方法）
 	def MyThread(self, myqueue, methodThread):
 		tag = 0
 		while myqueue.qsize():
-			num = 30
+			num = 50
 			if myqueue.qsize() < num:
 				num = myqueue.qsize()
-			threads = [] #线程列表
+			threads = []  # 线程列表
 			for i in range(num):
 				th = threading.Thread(target=methodThread)
-				threads.append(th) # 加入线程列表
+				threads.append(th)  # 加入线程列表
 			
-			for i in range(num): # 开始线程
+			for i in range(num):  # 开始线程
 				threads[i].start()
 			
-			for i in range(num): # 结束线程
+			for i in range(num):  # 结束线程
 				threads[i].join()
 			tag += 1
+	
 	# 执行程序
 	def run(self):
 		self.event.set()
@@ -189,6 +201,7 @@ class FangTxHouse(object):
 		self.push_url()
 		self.MyThread(self.url_queue, self.parse_house)
 		self.bol = False  # 退出线程
+
 
 if __name__ == '__main__':
 	ftx_house = FangTxHouse()
