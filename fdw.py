@@ -8,7 +8,7 @@ import requests, redis, time
 from faker import Faker
 from random import choice
 
-pool = redis.ConnectionPool(host='r-uf6f097afc7c8814.redis.rds.aliyuncs.com', port=6379, password='13611693775Gx',
+pool = redis.ConnectionPool(host='xxx', port=6379, password='13611693775Gx',
                             db=80)
 redis = redis.Redis(connection_pool=pool)
 
@@ -329,7 +329,7 @@ class ProxyIP:
 	''' 代理IP类 '''
 	
 	def __init__(self):
-		self.order = 'd86502654f7017ffbe125ae0139afef5'
+		self.order = 'xxx'
 		self.apiUrl = 'http://api.ip.data5u.com/dynamic/get.html?order=' + self.order
 		self.res = ''
 	
@@ -341,27 +341,23 @@ class ProxyIP:
 
 
 if __name__ == '__main__':
-	while True:
-		# for i in range(0,5):
-		#	print("第{}轮".format(i+1))
-		info = {}
-		num = 0
-		project_queue = Queue()
-		projects_queue = Queue()
-		presell_queue = Queue()
-		item_queue = Queue()
-		event = threading.Event()
-		event.set()
-		bol = True
-		pi = ProxyIP()
-		proxyip = pi.GetProxyIp  # 代理IP
-		th1 = threading.Thread(target=IsSet)
-		th1.start()
-		get_area()
-		MyThread(project_queue, parse_page)
-		MyThread(projects_queue, get_project)
-		MyThread(presell_queue, parse_presell)
-		MyThread(item_queue, parse_build)
-		print('爬取完成')
-		bol = False
-		time.sleep(15 * 60)
+	info = {}
+	num = 0
+	project_queue = Queue()
+	projects_queue = Queue()
+	presell_queue = Queue()
+	item_queue = Queue()
+	event = threading.Event()
+	event.set()
+	bol = True
+	pi = ProxyIP()
+	proxyip = pi.GetProxyIp  # 代理IP
+	th1 = threading.Thread(target=IsSet)
+	th1.start()
+	get_area()
+	MyThread(project_queue, parse_page)
+	MyThread(projects_queue, get_project)
+	MyThread(presell_queue, parse_presell)
+	MyThread(item_queue, parse_build)
+	print('爬取完成')
+	bol = False
