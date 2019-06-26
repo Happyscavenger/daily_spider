@@ -13,7 +13,7 @@ class Residence(object):
 	def __init__(self):
 		self.url = "http://www.fangdi.com.cn/service/trade/getFirstResidenceStat.action"
 		self.conn = pymysql.connect(
-			host='rm-uf6t4r3u8vea8u3404o.mysql.rds.aliyuncs.com',
+			host='xxx',
 			port=3306,
 			user='caijisa',
 			passwd='Caijisa123',
