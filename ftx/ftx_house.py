@@ -8,7 +8,7 @@ import random,sys
 class FangTxHouse(object):
 	
 	def __init__(self):
-		self.order = 'ef8e072865d9e1afdd085731eb44f5d6'
+		self.order = 'xxx'
 		self.apiUrl = 'http://api.ip.data5u.com/dynamic/get.html?order=' + self.order
 		self.res = ''
 		self.num = 0  # ip 更换计数
