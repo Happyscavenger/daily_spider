@@ -11,7 +11,7 @@ class FangTxProject(object):
 	
 	def __init__(self):
 		client = MongoClient(
-			'mongodb://root:Lansi123@dds-uf605bb40eca92541596-pub.mongodb.rds.aliyuncs.com:3717,dds-uf605bb40eca92542332-pub.mongodb.rds.aliyuncs.com:3717/admin?replicaSet=mgset-4720883')
+			'xxxx')
 		db = client.caiji
 		self.ftx = db.fangtianxia
 		self.areaList = ['a025', 'a018', 'a019', 'a030', 'a028', 'a020', 'a026', 'a0586', 'a029', 'a023', 'a027',
