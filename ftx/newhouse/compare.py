@@ -15,7 +15,7 @@ class CompareNewHouse(object):
 	def __init__(self):
 		self.url = "http://www.fangdi.com.cn//service/trade/getHouseReview.action"
 		self.conn = pymysql.connect(
-			host='rm-uf6t4r3u8vea8u3404o.mysql.rds.aliyuncs.com',
+			host='xxx',
 			port=3306,
 			user='caijisa',
 			passwd='Caijisa123',
@@ -25,8 +25,8 @@ class CompareNewHouse(object):
 		)
 		self.cursor = self.conn.cursor()
 		self.client = MongoClient(
-			"mongodb://root:Lansi123@dds-uf605bb40eca92541596-pub.mongodb.rds.aliyuncs.com:3717,"
-			"dds-uf605bb40eca92542332-pub.mongodb.rds.aliyuncs.com:3717/admin?replicaSet=mgset-4720883")
+			"xxxx,"
+			"xxxx")
 		self.db = self.client.caiji_new
 		self.newroom = self.db.NewRoom
 
