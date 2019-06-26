@@ -9,7 +9,7 @@ import threading
 from pymongo import MongoClient
 
 client = MongoClient(
-	'mongodb://root:Lansi123@dds-uf605bb40eca92541596-pub.mongodb.rds.aliyuncs.com:3717,dds-uf605bb40eca92542332-pub.mongodb.rds.aliyuncs.com:3717/admin?replicaSet=mgset-4720883')
+	'xxx')
 my_db = client['anjuke']
 my_col = my_db['house_col']
 
@@ -50,7 +50,7 @@ class ProxyIP:
 	''' 代理IP类 '''
 	
 	def __init__(self):
-		self.order = 'ef8e072865d9e1afdd085731eb44f5d6'
+		self.order = 'xxx'
 		self.apiUrl = 'http://api.ip.data5u.com/dynamic/get.html?order=' + self.order
 		self.res = ''
 	
