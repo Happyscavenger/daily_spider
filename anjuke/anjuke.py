@@ -10,9 +10,8 @@ from copy import deepcopy
 import random
 from pymongo import MongoClient
 
-# client = MongoClient('mongodb://192.168.0.147:27017/')
 client = MongoClient(
-	'mongodb://root:Lansi123@dds-uf605bb40eca92541596-pub.mongodb.rds.aliyuncs.com:3717,dds-uf605bb40eca92542332-pub.mongodb.rds.aliyuncs.com:3717/admin?replicaSet=mgset-4720883')
+	'xxx')
 my_db = client['anjuke']
 my_col = my_db['house_col']
 
