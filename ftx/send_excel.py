@@ -13,10 +13,9 @@ ws = wb.active
 class send_email():
 	
 	def __init__(self):
-		self.sender = 'ayl1991923@qq.com'  # 发件人邮箱账号
-		self.my_pass = 'xjgvtqstqkirbcad'  # 发件人授权码
-		self.receivers = '807645038@qq.com' # 收件人邮箱账号，我这边发送给自己
-		# self.receivers = ['673202141@qq.com', '1271396431@qq.com', '807645038@qq.com', '1135252170@qq.com']
+		self.sender = 'xxx'  # 发件人邮箱账号
+		self.my_pass = 'xxxx'  # 发件人授权码
+		self.receivers = 'xxxx' # 收件人邮箱账号，我这边发送给自己，也可以是列表内多个邮箱账号
 		date_today = datetime.date.today()
 		date_l = datetime.timedelta(days=1)
 		self.date_y = date_today - date_l
@@ -24,7 +23,7 @@ class send_email():
 		self.name = '链家{}挂牌数据'.format(self.date_y) + '.xlsx'
 		
 		conn = pymysql.connect(
-			host='rm-uf6t4r3u8vea8u3404o.mysql.rds.aliyuncs.com',
+			host='xxx',
 			port=3306,
 			user='caijisa',
 			passwd='Caijisa123',
