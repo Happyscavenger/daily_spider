@@ -11,7 +11,7 @@ class ProxyIP:
 	''' 代理IP类 '''
 	
 	def __init__(self):
-		self.order = '1ed656e970a1956df7375bab520c2a5f'
+		self.order = 'xxxx'
 		self.apiUrl = 'http://api.ip.data5u.com/dynamic/get.html?order=' + self.order
 		self.res = ''
 	
